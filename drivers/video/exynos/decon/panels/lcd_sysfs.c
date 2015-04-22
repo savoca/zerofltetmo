@@ -513,9 +513,10 @@ static ssize_t siop_enable_store(struct device *dev,
 static ssize_t temperature_show(struct device *dev,
 	struct device_attribute *attr, char *buf)
 {
-	char temp[] = "-20, -19, 0, 1\n";
+	struct panel_private *priv = dev_get_drvdata(dev);
 
-	strcat(buf, temp);
+	sprintf(buf, "%d\n", priv->temperature);
+
 	return strlen(buf);
 }
 
