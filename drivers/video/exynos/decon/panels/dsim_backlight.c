@@ -21,6 +21,9 @@
 #include "aid_dimming.h"
 #endif
 
+#ifdef CONFIG_KEYBOARD_CYPRESS_TOUCH_MBR31X5
+#include "../../../../input/keyboard/cypress_20075/cypress_touchkey.h"
+#endif
 
 #ifdef CONFIG_PANEL_AID_DIMMING
 
@@ -443,6 +446,11 @@ static int get_acutal_br_index(struct dsim_device *dsim, int br)
 
 #endif
 
+#ifdef CONFIG_KEYBOARD_CYPRESS_TOUCH_MBR31X5
+static unsigned int tk_brightness_sync = 0;
+module_param(tk_brightness_sync, uint, 0644);
+#endif
+
 int dsim_panel_set_brightness(struct dsim_device *dsim, int force)
 {
 	int ret = 0;
@@ -511,6 +519,11 @@ int dsim_panel_set_brightness(struct dsim_device *dsim, int force)
 		dsim_err("%s failed to set brightness : %d\n", __func__, acutal_br);
 	}
 	mutex_unlock(&panel->lock);
+
+#ifdef CONFIG_KEYBOARD_CYPRESS_TOUCH_MBR31X5
+	if (tk_brightness_sync)
+		change_touch_key_led_voltage(panel->tk_br_tbl[p_br]);
+#endif
 
 set_br_exit:
 #endif

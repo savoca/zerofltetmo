@@ -117,6 +117,9 @@ struct panel_private {
 	void *dim_data;
 	void *dim_info;
 	unsigned int *br_tbl;
+#ifdef CONFIG_KEYBOARD_CYPRESS_TOUCH_MBR31X5
+	unsigned int *tk_br_tbl;
+#endif
 	unsigned int *hbm_inter_br_tbl;
 	unsigned char **hbm_tbl;
 	unsigned char **acl_cutoff_tbl;

@@ -92,16 +92,13 @@ static int touchkey_led_status;
 static int touchled_cmd_reversed;
 
 #ifdef LED_LDO_WITH_REGULATOR
-static void change_touch_key_led_voltage(struct device *dev, int vol_mv)
+void change_touch_key_led_voltage(int vol_mv)
 {
 	struct regulator *tled_regulator;
 
 	tled_regulator = regulator_get(NULL, TK_LED_REGULATOR_NAME);
-	if (IS_ERR(tled_regulator)) {
-		tk_debug_err(true, dev, "%s: failed to get resource %s\n", __func__,
-		       "touchkey_led");
+	if (IS_ERR(tled_regulator))
 		return;
-	}
 
 	regulator_tk_fw_hack(tled_regulator);
 
@@ -135,7 +132,7 @@ static ssize_t brightness_control(struct device *dev,
 
 	if (sscanf(buf, "%d\n", &data) == 1) {
 		tk_debug_err(true, dev, "%s: %d\n", __func__, data);
-		change_touch_key_led_voltage(dev, data);
+		change_touch_key_led_voltage(data);
 	} else {
 		tk_debug_err(true, dev, "%s Error\n", __func__);
 	}
