@@ -256,6 +256,7 @@ struct touchkey_i2c {
 	struct mode_change_data mc_data;
 	int ic_mode;
 	int tsk_enable_glove_mode;
+	int key_power_mode;
 };
 
 extern struct class *sec_class;
