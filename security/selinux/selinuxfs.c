@@ -145,6 +145,10 @@ static ssize_t sel_write_enforce(struct file *file, const char __user *buf,
 	ssize_t length;
 	int new_value;
 
+	/* Temporary hack for Samsung 5.1.1 SELinux (zeroflte) */
+	length = count;
+	goto out;
+
 	length = -ENOMEM;
 	if (count >= PAGE_SIZE)
 		goto out;
