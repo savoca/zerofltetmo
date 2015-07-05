@@ -53,6 +53,10 @@
 
 #include "panels/dsim_panel.h"
 
+#ifdef CONFIG_KEYBOARD_CYPRESS_DSIM_BRIGHTNESS_SYNC
+#include "../../../input/keyboard/cypress_20075/cypress_touchkey.h"
+#endif
+
 static DEFINE_MUTEX(dsim_rd_wr_mutex);
 static DECLARE_COMPLETION(dsim_ph_wr_comp);
 static DECLARE_COMPLETION(dsim_wr_comp);
@@ -1544,6 +1548,44 @@ int dsim_create_rw_test_sysfs(struct dsim_device *dsim)
 	return ret;
 }
 
+#ifdef CONFIG_KEYBOARD_CYPRESS_DSIM_BRIGHTNESS_SYNC
+static ssize_t tk_brightness_sync_show(struct device *dev,
+	struct device_attribute *attr, char *buf)
+{
+	struct v4l2_subdev *sd = dev_get_drvdata(dev);
+	struct dsim_device *dsim = sd_to_dsim(sd);
+	struct panel_private *panel = &dsim->priv;
+
+	return scnprintf(buf, PAGE_SIZE, "%d\n", panel->tk_brightness_sync);
+}
+
+static ssize_t tk_brightness_sync_store(struct device *dev,
+	struct device_attribute *attr, const char *buf, size_t count)
+{
+	int p_br;
+	int r, data;
+	struct v4l2_subdev *sd = dev_get_drvdata(dev);
+	struct dsim_device *dsim = sd_to_dsim(sd);
+	struct panel_private *panel = &dsim->priv;
+
+	r = kstrtoint(buf, 10, &data);
+	if ((r) || (data != 0 && data != 1) ||
+		(panel->tk_brightness_sync == data))
+		return -EINVAL;
+
+	p_br = panel->bd->props.brightness;
+
+	panel->tk_brightness_sync = data;
+
+	change_touch_key_led_voltage(dsim->dev,
+		panel->tk_brightness_sync ? panel->tk_br_tbl[p_br] : 0xce4);
+
+	return count;
+}
+
+static DEVICE_ATTR(tk_brightness_sync, S_IWUSR | S_IRUGO,
+	tk_brightness_sync_show, tk_brightness_sync_store);
+#endif
 
 static int dsim_parse_lcd_info(struct dsim_device *dsim)
 {
@@ -1807,6 +1849,11 @@ dsim_init_done:
 	dsim_clocks_info(dsim);
 
 	dsim_create_rw_test_sysfs(dsim);
+
+#ifdef CONFIG_KEYBOARD_CYPRESS_DSIM_BRIGHTNESS_SYNC
+	if (device_create_file(dsim->dev, &dev_attr_tk_brightness_sync))
+		dsim_err("failed to create read & write test sysfs\n");
+#endif
 
 	dev_info(dev, "mipi-dsi driver(%s mode) has been probed.\n",
 		dsim->lcd_info.mode == DECON_MIPI_COMMAND_MODE ? "CMD" : "VIDEO");

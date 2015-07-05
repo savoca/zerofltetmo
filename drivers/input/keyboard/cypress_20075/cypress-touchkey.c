@@ -93,7 +93,11 @@ static int touchkey_led_status;
 static int touchled_cmd_reversed;
 
 #ifdef LED_LDO_WITH_REGULATOR
+#ifndef CONFIG_KEYBOARD_CYPRESS_DSIM_BRIGHTNESS_SYNC
 static void change_touch_key_led_voltage(struct device *dev, int vol_mv)
+#else
+void change_touch_key_led_voltage(struct device *dev, int vol_mv)
+#endif
 {
 	struct regulator *tled_regulator;
 

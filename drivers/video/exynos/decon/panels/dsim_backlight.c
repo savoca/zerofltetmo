@@ -21,6 +21,10 @@
 #include "aid_dimming.h"
 #endif
 
+#ifdef CONFIG_KEYBOARD_CYPRESS_DSIM_BRIGHTNESS_SYNC
+#include "../../../../input/keyboard/cypress_20075/cypress_touchkey.h"
+#endif
+
 #ifndef USE_PANEL_PARAMETER_MAX_SIZE
 #define ELVSS_LEN_MAX ELVSS_LEN
 #define TSET_LEN_MAX TSET_LEN
@@ -534,6 +538,11 @@ int dsim_panel_set_brightness(struct dsim_device *dsim, int force)
 		dsim_err("%s failed to set brightness : %d\n", __func__, acutal_br);
 	}
 	mutex_unlock(&panel->lock);
+
+#ifdef CONFIG_KEYBOARD_CYPRESS_DSIM_BRIGHTNESS_SYNC
+	if (panel->tk_brightness_sync)
+		change_touch_key_led_voltage(dsim->dev, panel->tk_br_tbl[p_br]);
+#endif
 
 set_br_exit:
 #endif

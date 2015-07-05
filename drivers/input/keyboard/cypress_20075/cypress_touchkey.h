@@ -265,4 +265,8 @@ extern struct class *sec_class;
 void touchkey_charger_infom(bool en);
 extern unsigned int lcdtype;
 extern unsigned int system_rev;
+
+#ifdef CONFIG_KEYBOARD_CYPRESS_DSIM_BRIGHTNESS_SYNC
+extern void change_touch_key_led_voltage(struct device *dev, int vol_mv);
+#endif
 #endif /* _CYPRESS_TOUCHKEY_H */

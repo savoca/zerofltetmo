@@ -168,6 +168,10 @@ struct panel_private {
 	unsigned char a3_vint[10];
 	unsigned int a3_vint_updated;
 
+#ifdef CONFIG_KEYBOARD_CYPRESS_DSIM_BRIGHTNESS_SYNC
+	unsigned int *tk_br_tbl;
+	unsigned int tk_brightness_sync;
+#endif
 };
 
 struct dsim_panel_ops {

@@ -23,3 +23,11 @@ config KEYBOARD_CYPRESS_TOUCH_POWER_KEY
 	help
 	  Say Y here to enable power-key emulation using 'back'
 	  and 'recent' keys.
+
+config KEYBOARD_CYPRESS_DSIM_BRIGHTNESS_SYNC
+	bool "Cypress/DSIM brightness sync"
+	depends on (KEYBOARD_CYPRESS_TOUCH_20075 || KEYBOARD_CYPRESS_TOUCH_MBR31X5) && PANEL_S6E3HA2_DYNAMIC
+	default n
+	help
+	  Say Y here to enable brightness syncing between Cypress
+	  touch keys and DSIM panel brightness.
